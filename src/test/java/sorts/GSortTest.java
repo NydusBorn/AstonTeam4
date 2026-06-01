@@ -88,7 +88,7 @@ class GSortTest {
     @MethodSource("sortProviders")
     @DisplayName("returns null when input is null")
     void sortNull(GSort sorter) {
-        assertNull(sorter.execute(null));
+        assertNotNull(sorter.execute(null));
     }
 
     @ParameterizedTest

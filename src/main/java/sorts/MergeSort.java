@@ -8,7 +8,7 @@ public class MergeSort extends GSort {
 
     @Override
     public <T extends Comparable<T>> List<T> execute(List<T> list) {
-        if (list == null) return null;
+        if (list == null) return List.of();
         if (list.isEmpty()) return List.of();
 
         return mergeSort(new ArrayList<>(list), Comparator.naturalOrder());
@@ -16,7 +16,7 @@ public class MergeSort extends GSort {
 
     @Override
     public <T> List<T> execute(List<T> list, Comparator<T> comparator) {
-        if (list == null) return null;
+        if (list == null) return List.of();
         if (list.isEmpty()) return List.of();
 
         return mergeSort(new ArrayList<>(list), comparator);
