@@ -1,79 +1,73 @@
-import java.util.Arrays;
+package sorts;
 
-public class MergeSort {
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-    public static void mergeSort(int[] array) {
-        if (array.length < 2) {
-            return;
-        }
+public class MergeSort extends GSort {
 
-        int mid = array.length / 2;
+    @Override
+    public <T extends Comparable<T>> List<T> execute(List<T> list) {
+        if (list == null) return null;
+        if (list.isEmpty()) return List.of();
 
-        int[] left = new int[mid];
-        int[] right = new int[array.length - mid];
-
-        // копируем левую часть
-        for (int i = 0; i < mid; i++) {
-            left[i] = array[i];
-        }
-
-        // копируем правую часть
-        for (int i = mid; i < array.length; i++) {
-            right[i - mid] = array[i];
-        }
-
-        // рекурсивно сортируем
-        mergeSort(left);
-        mergeSort(right);
-
-        // слияние
-        merge(array, left, right);
+        return mergeSort(new ArrayList<>(list), Comparator.naturalOrder());
     }
 
-    private static void merge(int[] array, int[] left, int[] right) {
+    @Override
+    public <T> List<T> execute(List<T> list, Comparator<T> comparator) {
+        if (list == null) return null;
+        if (list.isEmpty()) return List.of();
+
+        return mergeSort(new ArrayList<>(list), comparator);
+    }
+
+    private <T> List<T> mergeSort(List<T> list, Comparator<T> comparator) {
+        if (list.size() <= 1) {
+            return list;
+        }
+
+        int mid = list.size() / 2;
+
+        List<T> left = mergeSort(
+                new ArrayList<>(list.subList(0, mid)),
+                comparator
+        );
+
+        List<T> right = mergeSort(
+                new ArrayList<>(list.subList(mid, list.size())),
+                comparator
+        );
+
+        return merge(left, right, comparator);
+    }
+
+    private <T> List<T> merge(
+            List<T> left,
+            List<T> right,
+            Comparator<T> comparator
+    ) {
+        List<T> result = new ArrayList<>();
 
         int i = 0;
         int j = 0;
-        int k = 0;
 
-        while (i < left.length && j < right.length) {
-
-            if (left[i] <= right[j]) {
-                array[k] = left[i];
-                i++;
+        while (i < left.size() && j < right.size()) {
+            if (comparator.compare(left.get(i), right.get(j)) <= 0) {
+                result.add(left.get(i++));
             } else {
-                array[k] = right[j];
-                j++;
+                result.add(right.get(j++));
             }
-
-            k++;
         }
 
-        // остатки left
-        while (i < left.length) {
-            array[k] = left[i];
-            i++;
-            k++;
+        while (i < left.size()) {
+            result.add(left.get(i++));
         }
 
-        // остатки right
-        while (j < right.length) {
-            array[k] = right[j];
-            j++;
-            k++;
+        while (j < right.size()) {
+            result.add(right.get(j++));
         }
-    }
 
-    public static void main(String[] args) {
-
-        int[] numbers = {9, 2, 1, 14, 22, 10, 5};
-
-        System.out.println("До сортировки:");
-        System.out.println(Arrays.toString(numbers));
-
-        mergeSort(numbers);
-
-        System.out.println("После сортировки:");
-        System.out.println(Arrays.toString(numbers));
+        return result;
     }
 }
