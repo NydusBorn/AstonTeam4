@@ -1,58 +1,55 @@
 package sorts;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Arrays;
+import java.util.List;
 
-public class QuickSort {
-    public static <T> void quickSort(T[] array, int start, int end, Comparator <T> comparator) {
-        if (array == null || comparator == null) {
-            throw new IllegalArgumentException("Массив и компоратор не может быть пустым");
-        }
-        if (start >= end) {
-            return;
-        }
-        int pivotIndex = start + (end-start)/2;
-        T pivotValue = array[pivotIndex];
+public class QuickSort extends GSort {
+    @Override
+    public <T extends Comparable<T>> List<T> execute(List<T> arr) {
+        if (arr == null) return new ArrayList<>();
+        if (arr.size() <= 1) return new ArrayList<>(arr);
+
+        List<T> result = new ArrayList<>(arr);
+        quickSortList(result, 0, result.size() - 1, Comparator.naturalOrder());
+        return result;
+    }
+
+    @Override
+    public <T> List<T> execute(List<T> arr, Comparator<T> comparator) {
+        if (arr == null || comparator == null) return new ArrayList<>(arr == null ? new ArrayList<>() : arr);
+        if (arr.size() <= 1) return new ArrayList<>(arr);
+
+        List<T> result = new ArrayList<>(arr);
+        quickSortList(result, 0, result.size() - 1, comparator);
+        return result;
+    }
+
+    
+    private <T> void quickSortList(List<T> list, int start, int end, Comparator<T> comparator) {
+        if (start >= end) return;
+
+        int pivotIndex = start + (end - start) / 2;
+        T pivotValue = list.get(pivotIndex);
         int left = start;
         int right = end;
 
         while (left <= right) {
-            while (comparator.compare(array[left],pivotValue) < 0) {
-                left++;
-            }
-            while (comparator.compare(array[right], pivotValue) > 0 ) {
-                right--;
-            }
+            while (comparator.compare(list.get(left), pivotValue) < 0) left++;
+            while (comparator.compare(list.get(right), pivotValue) > 0) right--;
             if (left <= right) {
-                swap(array, left, right);
+                swap(list, left, right);
                 left++;
                 right--;
             }
-
         }
-        if (start < right) {
-            quickSort(array, start, right, comparator);
-        }
-        if (left < end) {
-            quickSort(array, left, end, comparator);
-        }
-    }
-    private static <T> void swap(T[] array, int left, int right) {
-        T temp = array[right];
-        array[right] = array[left];
-        array[left] = temp;
-
+        if (start < right) quickSortList(list, start, right, comparator);
+        if (left < end) quickSortList(list, left, end, comparator);
     }
 
-    public static void main(String[] args) {
-        Integer[] array = {2,3,4,6,7,1,5};
-        System.out.println("Данные(Integer) до сортировки: " + Arrays.toString(array));
-        quickSort(array, 0, array.length - 1, Comparator.naturalOrder());
-        System.out.println("Данные(Integer) после сортировки: " + Arrays.toString(array));
-
-        String[] array2 = {"a", "abcd", "cd", "bcd"};
-        System.out.println("Данные(String) до сортировки: " + Arrays.toString(array2));
-        quickSort(array2, 0 , array2.length - 1, Comparator.comparingInt(String::length));
-        System.out.println("Данные(String) после сортировки: " + Arrays.toString(array2));
+    private <T> void swap(List<T> list, int i, int j) {
+        T temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
     }
 }
