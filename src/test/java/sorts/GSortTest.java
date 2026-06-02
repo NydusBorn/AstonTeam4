@@ -19,7 +19,8 @@ class GSortTest {
     static Stream<Arguments> sortProviders() {
         return Stream.of(
                 Arguments.of(new HeapSort()),
-                Arguments.of(new MergeSort())
+                Arguments.of(new MergeSort()),
+                Arguments.of(new QuickSort())
         );
     }
 
