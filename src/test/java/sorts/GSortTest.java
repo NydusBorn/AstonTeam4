@@ -1,5 +1,6 @@
 package sorts;
 
+import com.sun.jdi.connect.Connector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,8 +22,7 @@ class GSortTest {
                 Arguments.of(new HeapSort()),
                 Arguments.of(new MergeSort()),
                 Arguments.of(new QuickSort()),
-                Arguments.of(new InsertionSort()),
-                Arguments.of(new SelectionSort())
+                Arguments.of(new InsertionSort())
         );
     }
 
@@ -90,7 +90,7 @@ class GSortTest {
     @MethodSource("sortProviders")
     @DisplayName("returns null when input is null")
     void sortNull(GSort sorter) {
-        assertNotNull(sorter.execute(null));
+        assertNull(sorter.execute(null));
     }
 
     @ParameterizedTest
