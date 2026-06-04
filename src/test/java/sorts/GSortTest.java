@@ -20,7 +20,8 @@ class GSortTest {
         return Stream.of(
                 Arguments.of(new HeapSort()),
                 Arguments.of(new MergeSort()),
-                Arguments.of(new QuickSort())
+                Arguments.of(new QuickSort()),
+                Arguments.of(new InsertionSort())
         );
     }
 
