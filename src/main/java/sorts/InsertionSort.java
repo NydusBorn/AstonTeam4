@@ -8,7 +8,7 @@ public class InsertionSort extends GSort {
 
     @Override
     public <T extends Comparable<T>> List<T> execute(List<T> arr) {
-        if (arr == null) return null;
+        if (arr == null) return List.of();
         List<T> result = new ArrayList<>(arr);
         for (int i = 1; i < result.size(); i++) {
             T key = result.get(i);
@@ -24,7 +24,7 @@ public class InsertionSort extends GSort {
 
     @Override
     public <T> List<T> execute(List<T> arr, Comparator<T> comparator) {
-        if (arr == null) return null;
+        if (arr == null) return List.of();
         List<T> result = new ArrayList<>(arr);
         for (int i = 1; i < result.size(); i++) {
             T key = result.get(i);
