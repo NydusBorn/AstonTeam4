@@ -14,13 +14,22 @@ public class SortExecutor {
             return input;
         }
 
-        // Handle IGNORE direction — return input unchanged
-        if (config.getDirection() == SortConfig.SortDirection.IGNORE) {
+        // Build comparator from criteria list
+        List<SortCriterion> criteria = config.getCriteria();
+
+        // Empty criteria defaults to ascending productionYear
+        if (criteria.isEmpty()) {
+            Comparator<Auto> comparator = Comparator.comparing(Auto::getProductionYear);
+            return sorter.execute(input, comparator);
+        }
+
+        // Handle if all criteria are IGNORE — return input unchanged
+        boolean allIgnore = criteria.stream().allMatch(c -> c.getDirection() == SortConfig.SortDirection.IGNORE);
+        if (allIgnore) {
             return new ArrayList<>(input);
         }
 
-        // Build comparator based on direction
-        Comparator<Auto> comparator = buildComparator(config.getDirection());
+        Comparator<Auto> comparator = buildComparator(criteria);
 
         // Sort using the sorter with the comparator
         List<Auto> sorted = sorter.execute(input, comparator);
@@ -31,11 +40,32 @@ public class SortExecutor {
         return sorted;
     }
 
-    private Comparator<Auto> buildComparator(SortConfig.SortDirection direction) {
-        return switch (direction) {
-            case ASCENDING -> Comparator.comparing(Auto::getProductionYear);
-            case DESCENDING -> Comparator.comparing(Auto::getProductionYear).reversed();
-            default -> throw new IllegalArgumentException("Unexpected direction: " + direction);
+    private Comparator<Auto> buildComparator(List<SortCriterion> criteria) {
+        // Empty criteria defaults to ascending productionYear
+        if (criteria.isEmpty()) {
+            return Comparator.comparing(Auto::getProductionYear);
+        }
+
+        Comparator<Auto> comp = buildSingleComparator(criteria.get(0));
+
+        for (int i = 1; i < criteria.size(); i++) {
+            comp = comp.thenComparing(buildSingleComparator(criteria.get(i)));
+        }
+
+        return comp;
+    }
+
+    private Comparator<Auto> buildSingleComparator(SortCriterion c) {
+        Comparator<Auto> comp = switch (c.getField()) {
+            case MODEL -> Comparator.comparing(Auto::getModel);
+            case PRODUCTION_YEAR -> Comparator.comparing(Auto::getProductionYear);
+            case POWER -> Comparator.comparing(Auto::getPower);
         };
+
+        if (c.getDirection() == SortConfig.SortDirection.DESCENDING) {
+            comp = comp.reversed();
+        }
+
+        return comp;
     }
 }

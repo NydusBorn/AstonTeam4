@@ -1,11 +1,8 @@
 package sortapp;
 
-import sorts.GSort;
-import sorts.HeapSort;
-import sorts.InsertionSort;
-import sorts.MergeSort;
-import sorts.QuickSort;
+import sorts.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SortApp {
@@ -71,23 +68,27 @@ public class SortApp {
                 return;
             }
 
-            // Step 2: Sort configuration
-            SortConfig.SortDirection direction = selectDirection();
-            SortConfig.IntFilter intFilter = selectIntFilter();
+            // Step 2: Sort configuration — multi-field
+            List<Integer> fieldOrder = selectFieldOrder();
+            List<SortCriterion> criteria = selectCriteria(fieldOrder);
+            SortConfig config = new SortConfig(criteria);
 
-            SortConfig config = new SortConfig(direction, intFilter);
+            // Display selected criteria
+            IO.println("\nSorting with criteria:");
+            for (int i = 0; i < criteria.size(); i++) {
+                SortCriterion c = criteria.get(i);
+                IO.println("  " + (i + 1) + ". " + c.getField() + " — " + c.getDirection()
+                        + (c.getField() == SortCriterion.Field.PRODUCTION_YEAR ? ", filter=" + c.getIntFilter() : ""));
+            }
 
             // Step 3: Sort execution
-            IO.println("\nSorting with:");
-            IO.println("  Direction: " + direction);
-            IO.println("  Int Filter: " + intFilter);
-
             // Run with each sorter and let user choose
             IO.println("Which sort algorithm to use?");
             IO.println("1. Heap Sort");
             IO.println("2. Merge Sort");
             IO.println("3. Quick Sort");
             IO.println("4. Insertion Sort");
+            IO.println("4. Selection Sort");
 
             int sorterChoice = IO.parseInt("> ");
             GSort sorter = switch (sorterChoice) {
@@ -95,6 +96,7 @@ public class SortApp {
                 case 2 -> new MergeSort();
                 case 3 -> new QuickSort();
                 case 4 -> new InsertionSort();
+                case 5 -> new SelectionSort();
                 default -> {
                     IO.println("Invalid sorter. Defaulting to Heap Sort.");
                     yield new HeapSort();
@@ -117,11 +119,71 @@ public class SortApp {
         }
     }
 
-    private SortConfig.SortDirection selectDirection() {
-        IO.println("\nSelect sort direction:");
+    private List<Integer> selectFieldOrder() {
+        while (true) {
+            IO.println("\nSelect fields to sort by (comma-separated numbers 1-3):");
+            IO.println("  1 = model, 2 = productionYear, 3 = power");
+            IO.println("  Example: 1,3,2 or 2,1 or 3");
+            String input = IO.readLine("> ");
+            if (input.isEmpty()) {
+                IO.println("Defaulting to ascending sort by productionYear.");
+                return List.of(2);
+            }
+
+            try {
+                String[] parts = input.split(",");
+                List<Integer> fields = new ArrayList<>();
+                for (String part : parts) {
+                    int val = Integer.parseInt(part.trim());
+                    if (val < 1 || val > 3) {
+                        IO.println("Invalid field number: " + val + ". Must be 1, 2, or 3. Please try again.");
+                        fields.clear();
+                        break;
+                    }
+                    if (fields.contains(val)) {
+                        IO.println("Duplicate field number: " + val + ". Please try again.");
+                        fields.clear();
+                        break;
+                    }
+                    fields.add(val);
+                }
+                if (!fields.isEmpty()) {
+                    return fields;
+                }
+            } catch (NumberFormatException e) {
+                IO.println("Invalid input. Please enter comma-separated numbers (e.g., 1,3,2).");
+            }
+        }
+    }
+
+    private List<SortCriterion> selectCriteria(List<Integer> fieldOrder) {
+        List<SortCriterion> criteria = new ArrayList<>();
+        for (Integer fieldNum : fieldOrder) {
+            SortCriterion.Field field = switch (fieldNum) {
+                case 1 -> SortCriterion.Field.MODEL;
+                case 2 -> SortCriterion.Field.PRODUCTION_YEAR;
+                case 3 -> SortCriterion.Field.POWER;
+                default -> throw new IllegalStateException("Unexpected field: " + fieldNum);
+            };
+
+            SortConfig.SortDirection direction = selectFieldDirection();
+            SortConfig.IntFilter intFilter = SortConfig.IntFilter.ALL;
+
+            // Only ask intFilter for PRODUCTION_YEAR
+            if (field == SortCriterion.Field.PRODUCTION_YEAR) {
+                intFilter = selectIntFilter();
+            }
+
+            criteria.add(new SortCriterion(field, direction, intFilter));
+        }
+        return criteria;
+    }
+
+    private SortConfig.SortDirection selectFieldDirection() {
+        IO.println("\nSelect direction:");
         IO.println("1. Ascending");
         IO.println("2. Descending");
-        IO.println("3. Ignore (keep original order)");
+        IO.println("3. Ignore");
 
         int choice = IO.parseInt("> ");
         return switch (choice) {

@@ -1,5 +1,7 @@
 package sortapp;
 
+import java.util.List;
+
 public class SortConfig {
 
     public enum SortDirection {
@@ -14,24 +16,24 @@ public class SortConfig {
         EVEN
     }
 
-    private final SortDirection direction;
-    private final IntFilter intFilter;
+    private final List<SortCriterion> criteria;
 
     public SortConfig(SortDirection direction, IntFilter intFilter) {
-        this.direction = direction;
-        this.intFilter = intFilter;
+        this.criteria = List.of(
+                new SortCriterion(SortCriterion.Field.PRODUCTION_YEAR, direction, intFilter)
+        );
     }
 
-    public SortDirection getDirection() {
-        return direction;
+    public SortConfig(List<SortCriterion> criteria) {
+        this.criteria = criteria;
     }
 
-    public IntFilter getIntFilter() {
-        return intFilter;
+    public List<SortCriterion> getCriteria() {
+        return criteria;
     }
 
     @Override
     public String toString() {
-        return "SortConfig{direction=" + direction + ", intFilter=" + intFilter + "}";
+        return "SortConfig{criteria=" + criteria + "}";
     }
 }
