@@ -88,7 +88,7 @@ public class SortApp {
             IO.println("2. Merge Sort");
             IO.println("3. Quick Sort");
             IO.println("4. Insertion Sort");
-            IO.println("4. Selection Sort");
+            IO.println("5. Selection Sort");
 
             int sorterChoice = IO.parseInt("> ");
             GSort sorter = switch (sorterChoice) {
