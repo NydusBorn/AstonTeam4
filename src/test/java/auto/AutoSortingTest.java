@@ -12,10 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import sorts.GSort;
-import sorts.HeapSort;
-import sorts.MergeSort;
-import sorts.QuickSort;
+import sorts.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +23,9 @@ class AutoSortingTest {
         return Stream.of(
                 Arguments.of(new HeapSort()),
                 Arguments.of(new MergeSort()),
-                Arguments.of(new QuickSort())
+                Arguments.of(new QuickSort()),
+                Arguments.of(new InsertionSort()),
+                Arguments.of(new SelectionSort())
         );
     }
 

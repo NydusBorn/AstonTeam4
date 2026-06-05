@@ -1,10 +1,6 @@
 package sortapp;
 
-import sorts.GSort;
-import sorts.HeapSort;
-import sorts.InsertionSort;
-import sorts.MergeSort;
-import sorts.QuickSort;
+import sorts.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +34,7 @@ public class BenchMode {
             benchmarkSort("Merge Sort", new MergeSort(), intList);
             benchmarkSort("Quick Sort", new QuickSort(), intList);
             benchmarkSort("Insertion Sort", new InsertionSort(), intList);
+            benchmarkSort("Selection Sort", new SelectionSort(), intList);
 
             // Check if any sort took more than 10ms
             if (testExceeds10ms(size)) {
