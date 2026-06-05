@@ -21,7 +21,8 @@ class GSortTest {
                 Arguments.of(new HeapSort()),
                 Arguments.of(new MergeSort()),
                 Arguments.of(new QuickSort()),
-                Arguments.of(new InsertionSort())
+                Arguments.of(new InsertionSort()),
+                Arguments.of(new SelectionSort())
         );
     }
 
