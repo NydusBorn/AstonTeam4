@@ -11,6 +11,8 @@ public class SortApp {
     private final SortExecutor sortExecutor = new SortExecutor();
     private final OutputManager outputManager = new OutputManager();
 
+    private List<auto.Auto> lastSortedList = null;
+
     public static void main(String[] args) {
         SortApp app = new SortApp();
         app.runLoop();
@@ -21,6 +23,7 @@ public class SortApp {
             IO.println("\n========== Auto Sorter ==========");
             IO.println("1. Interactive Sort");
             IO.println("2. Bench Mode");
+            IO.println("3. Multithread Counter & Search");
             IO.println("0. Exit");
             IO.println("=================================");
 
@@ -29,6 +32,7 @@ public class SortApp {
             switch (choice) {
                 case 1 -> runInteractiveSort();
                 case 2 -> BenchMode.run();
+                case 3 -> runMultithreadFeatures();
                 case 0 -> {
                     IO.println("Goodbye!");
                     return;
@@ -105,6 +109,8 @@ public class SortApp {
 
             List<auto.Auto> sorted = sortExecutor.execute(autos, config, sorter);
 
+            lastSortedList = new ArrayList<>(sorted);
+
             // Step 4: Output selection
             int outputChoice = IO.parseInt("\nOutput option:\n1. Stdout\n2. File (not implemented)\n> ");
 
@@ -116,6 +122,36 @@ public class SortApp {
 
         } catch (Exception e) {
             IO.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void runMultithreadFeatures() {
+        if (lastSortedList == null || lastSortedList.isEmpty()) {
+            IO.println("\nPlease run sorting first (option 1). No data for search/count.");
+            return;
+        }
+
+        IO.println("\n=== Multithreaded Occurrence Count ===");
+        String targetModel = IO.readLine("Enter model to count occurrences: ");
+        List<String> models = new ArrayList<>();
+        for (auto.Auto a : lastSortedList) {
+            models.add(a.getModel());
+        }
+        int count = MultithreadFeatures.countOccurrencesMultithreaded(models, targetModel, 4);
+        IO.println("Model '" + targetModel + "' occurs " + count + " time(s).");
+
+        IO.println("\n=== Binary Search by Power (requires power-sorted list) ===");
+        List<Integer> powers = new ArrayList<>();
+        for (auto.Auto a : lastSortedList) {
+            powers.add(a.getPower());
+        }
+        powers.sort(Integer::compareTo);
+        int targetPower = IO.parseInt("Enter power value to search: ");
+        int index = MultithreadFeatures.binarySearch(powers, targetPower);
+        if (index >= 0) {
+            IO.println("Power " + targetPower + " found at position " + index);
+        } else {
+            IO.println("Power " + targetPower + " not found.");
         }
     }
 
