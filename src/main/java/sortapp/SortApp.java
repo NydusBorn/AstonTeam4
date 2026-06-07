@@ -89,6 +89,7 @@ public class SortApp {
             IO.println("3. Quick Sort");
             IO.println("4. Insertion Sort");
             IO.println("5. Selection Sort");
+            IO.println("6. Wrapper Sort");
 
             int sorterChoice = IO.parseInt("> ");
             GSort sorter = switch (sorterChoice) {
@@ -97,6 +98,7 @@ public class SortApp {
                 case 3 -> new QuickSort();
                 case 4 -> new InsertionSort();
                 case 5 -> new SelectionSort();
+                case 6 -> new WrapperSort(new QuickSort());
                 default -> {
                     IO.println("Invalid sorter. Defaulting to Heap Sort.");
                     yield new HeapSort();
