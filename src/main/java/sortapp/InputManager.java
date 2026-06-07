@@ -2,13 +2,15 @@ package sortapp;
 
 import auto.Auto;
 import auto.AutoBuilder;
+import collection.CustomArrayList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class InputManager {
 
@@ -16,14 +18,13 @@ public class InputManager {
     private static final String[] MODEL_SUFFIXES = {"Sedan", "Coupe", "SUV", "Hatchback", "Truck", "Van", "Wagon", "Convertible"};
 
     public List<Auto> generateRandom(int count) {
-        List<Auto> autos = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            String model = generateRandomModel();
-            int year = RANDOM.nextInt(2026 - 1886 + 1) + 1886;
-            double power = RANDOM.nextDouble(50.0, 500.0);
-            autos.add(new Auto(model, year, power));
-        }
-        return autos;
+        return IntStream.range(0, count)
+                .mapToObj(_ -> new Auto(
+                        generateRandomModel(),
+                        RANDOM.nextInt(2026 - 1886 + 1) + 1886,
+                        RANDOM.nextDouble(50.0, 500.0)
+                ))
+                .collect(Collectors.toCollection(CustomArrayList::new));
     }
 
     private String generateRandomModel() {
@@ -33,7 +34,7 @@ public class InputManager {
     }
 
     public List<Auto> loadFromFile(String path, int count) {
-        List<Auto> autos = new ArrayList<>();
+        List<Auto> autos = new CustomArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             int loaded = 0;
@@ -64,7 +65,7 @@ public class InputManager {
     }
 
     public List<Auto> manualInput(int maxCount) {
-        List<Auto> autos = new ArrayList<>();
+        List<Auto> autos = new CustomArrayList<>();
 
         if (maxCount == 0) {
             while (true) {
