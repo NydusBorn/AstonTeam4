@@ -106,13 +106,7 @@ public class SortApp {
             List<auto.Auto> sorted = sortExecutor.execute(autos, config, sorter);
 
             // Step 4: Output selection
-            int outputChoice = IO.parseInt("\nOutput option:\n1. Stdout\n2. File (not implemented)\n> ");
-
-            switch (outputChoice) {
-                case 1 -> outputManager.printToStdout(sorted);
-                case 2 -> IO.println("File output is not implemented in this version.");
-                default -> IO.println("Invalid output option.");
-            }
+            outputManager.selectOutput(sorted);
 
         } catch (Exception e) {
             IO.println("Error: " + e.getMessage());
