@@ -169,7 +169,7 @@ public class SortApp {
         }
         Auto target = parsed.get(0);
 
-        int numThreads = IO.parseInt("Number of threads (default 4): ", 4);
+        int numThreads = IO.parseInt("Number of threads: ");
         int occurrences = MultithreadFeatures.countOccurrences(autos, target, numThreads);
         IO.println("Occurrences of " + target + ": " + occurrences);
     }
