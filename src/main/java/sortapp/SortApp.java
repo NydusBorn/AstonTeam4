@@ -89,7 +89,6 @@ public class SortApp {
             IO.println("3. Quick Sort");
             IO.println("4. Insertion Sort");
             IO.println("5. Selection Sort");
-            IO.println("6. Wrapper Sort");
 
             int sorterChoice = IO.parseInt("> ");
             GSort sorter = switch (sorterChoice) {
@@ -98,12 +97,26 @@ public class SortApp {
                 case 3 -> new QuickSort();
                 case 4 -> new InsertionSort();
                 case 5 -> new SelectionSort();
-                case 6 -> new WrapperSort(new QuickSort());
                 default -> {
                     IO.println("Invalid sorter. Defaulting to Heap Sort.");
                     yield new HeapSort();
                 }
             };
+            boolean needWrapper = false;
+            for (SortCriterion criterion : criteria) {
+                if (criterion.getField() == SortCriterion.Field.PRODUCTION_YEAR) {
+                    if (criterion.getIntFilter() == SortConfig.IntFilter.ODD ||
+                            criterion.getIntFilter() == SortConfig.IntFilter.EVEN) {
+                        needWrapper = true;
+                        break;
+                    }
+                }
+            }
+
+            if (needWrapper) {
+                IO.println("Using Wrapper for sorting by productionYear with odd/even filter.");
+                sorter = new WrapperSort(sorter);
+            }
 
             List<auto.Auto> sorted = sortExecutor.execute(autos, config, sorter);
 
