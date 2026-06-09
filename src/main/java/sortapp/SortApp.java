@@ -106,6 +106,22 @@ public class SortApp {
                     yield new HeapSort();
                 }
             };
+            Boolean needEvenWrapper = null;
+            for (SortCriterion criterion : criteria) {
+                if (criterion.getField() == SortCriterion.Field.PRODUCTION_YEAR) {
+                    if (criterion.getIntFilter() == SortConfig.IntFilter.EVEN) {
+                        needEvenWrapper = true;
+                    } else if (criterion.getIntFilter() == SortConfig.IntFilter.ODD) {
+                        needEvenWrapper = false;
+                    }
+                    break;
+                }
+            }
+
+            if (needEvenWrapper != null) {
+                IO.println("Using Wrapper for sorting by productionYear with odd/even filter.");
+                sorter = new WrapperSort(sorter, needEvenWrapper);
+            }
 
             List<Auto> sorted = sortExecutor.execute(autos, config, sorter);
 
